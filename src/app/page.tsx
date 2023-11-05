@@ -21,7 +21,7 @@ export default function Component() {
     return (
         <>
 
-            <div className="flex flex-col justify-center items-center">
+            <div className="flex flex-col items-center justify-center gap-3 mb-6">
                 <video ref={ref} />
             </div>
 
@@ -30,16 +30,16 @@ export default function Component() {
                 ingredients.
             </p>
 
-            <div className="flex flex-col items-center justify-between gap-3 mb-6"> 
+            <div className="flex items-center justify-center gap-3 mb-6"> 
                 <input
                     aria-label="Enter barcode number"
-                    className="border border-zinc-700 px-2 py-1 rounded w-3/4 focus:outline-none focus:ring-2 focus:ring-primary-600 text-white bg-zinc-900"
+                    className="border border-zinc-700 px-2 py-2 rounded w-3/4 focus:outline-none focus:ring-2 focus:ring-primary-600 text-white bg-zinc-900"
                     placeholder="Enter barcode number"
                     type="text"
                     value={upc}
                     onChange={(e) => setUpc(e.target.value)}
                 />
-                <Link className="bg-white text-black px-3 py-2 rounded" href={`/results/${upc}`}>Scan</Link>
+                <Link className="bg-white text-black px-3 py-2 rounded" href={`/results/${upc}`}> Search </Link>
             </div>
         </>
     )

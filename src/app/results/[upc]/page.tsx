@@ -66,9 +66,9 @@ export default async function Page({
       <div>
         <h2 className="font-semibold text-lg mb-2 text-white">Ingredients</h2>
         <ul className="space-y-1">
-          {ingredients.map((ingredient, i) => (
+            {ingredients.map((ingredient, i) => (
             <li key={i} className="text-sm text-zinc-400">
-              {ingredient}
+              <a target="_blank" href={links[i]}>{ingredient}</a>
             </li>
           ))}
         </ul>
