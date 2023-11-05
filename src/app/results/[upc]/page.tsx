@@ -2,10 +2,10 @@ import SafetySpectrum from "@/components/SafetySpectrum";
 import * as cheerio from "cheerio";
 
 const typeToDanger: Record<string, number> = {
-    "typeO" : 0,
-    "typeN" : 1,
-    "typeB" : 2,
-    "typeA" : 3,
+    "typeO" : 0,  
+    "typeN" : 1,   
+    "typeB" : 2,   
+    "typeA" : 3,   
     "typeOP": 3,
     "typeNP": 4,
     "typeBP": 6,
@@ -13,10 +13,13 @@ const typeToDanger: Record<string, number> = {
 }
 
 async function getData(upc: string) {
-
+    
     const res: string = await (await fetch(`https://upcfoodsearch.com/search?s=${upc}`)).text();
     const $ = cheerio.load(res);
+    const pName = $("div.col-xs-12.col-sm-8.col-md-9 h1").text();
     const ingredientsContainer = $("#ingredientsStyled > p").find("a");
+    const manufacturerElement = $('td:contains("Manufacturer")');
+    const manufacturer = manufacturerElement.next().text().trim();
 
     const ingredients: {name: string, type: string, href: string}[] = [];
     var risk: number = 0;
@@ -43,11 +46,11 @@ async function getData(upc: string) {
 
     const grade = (1 - (risk/medianGrade)) * 100;
 
-    return {ingredients, grade};
+    return {pName, manufacturer, ingredients, grade};
 }
 
 export default async function Page({params: {upc}}: {params: {upc: string}}) {
-    const {ingredients, grade} = await getData(upc);
+    const {pName, manufacturer, ingredients, grade} = await getData(upc);
 
     const bgGood = '#166534';
     const bgOkay = '#854d0e';
@@ -55,17 +58,19 @@ export default async function Page({params: {upc}}: {params: {upc: string}}) {
 
     return (
         <div className="p-4 grid gap-6">
+            <h1 className="font-semibold text-center text-3xl mb-2 text-white"> {pName} </h1>
+            <h3 className="font-semibold text-2xl text-center mb-2 text-gray-400"> Manufacturer: {manufacturer} </h3>
             <SafetySpectrum grade={grade}/>
-            <div className="flex flex-col w-1/3 overflow-scroll">
+            <div className="flex flex-col w-full">
                 <h2 className="font-semibold text-2xl mb-2 text-white">Ingredients</h2>
-                <ul className="space-y-1">
+                <ul className="flex flex-wrap gap-2 overflow-y-scroll max-h-48">
                     {ingredients.map(({name, type, href}, i) => (
-                        <li key={i} className="text-lg text-center p-1 text-zinc-100 rounded"
+                        <li key={i} className="text-lg text-center text-zinc-100 rounded"
                             style={{ backgroundColor: (typeToDanger[type] > 4) ? bgBad
                                                     : (typeToDanger[type] > 1) ? bgOkay
                                                     : bgGood
                             }}>
-                            <a target="_blank" href={href}>{name}</a>
+                            <a target="_blank" href={href} className="p-2 truncate">{name}</a>
                         </li>
                     ))}
                 </ul>
