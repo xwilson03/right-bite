@@ -1,89 +1,77 @@
+import SafetySpectrum from "@/components/SafetySpectrum";
 import * as cheerio from "cheerio";
 
-async function getData(upc: string) {
-  const res: string = await (
-    await fetch(`https://upcfoodsearch.com/search?s=${upc}`)
-  ).text();
-  const $ = cheerio.load(res);
-
-  const ingredients: string[] = [];
-  const links: string[] = [];
-  const ingredientLinks = $("#ingredientsStyled > p").find("a");
-
-  ingredientLinks.each((idx, el) => {
-    ingredients.push($(el).text());
-    if ($(el).attr("href")) {
-      links.push($(el).attr("href") as string);
-    }
-  });
-
-  console.log(ingredientLinks);
-
-  ingredients.forEach((element) => {
-    console.log(element);
-  });
-
-  return {
-    data: {
-      links,
-      ingredients,
-    },
-  };
+const typeToDanger: Record<string, number> = {
+    "typeO" : 0,
+    "typeN" : 1,
+    "typeB" : 2,
+    "typeA" : 3,
+    "typeOP": 3,
+    "typeNP": 4,
+    "typeBP": 6,
+    "typeAP": 8,
 }
 
-export default async function Page({
-  params: { upc },
-}: {
-  params: { upc: string };
-}) {
-  const {
-    data: { links, ingredients },
-  } = await getData(upc);
+async function getData(upc: string) {
 
-  return (
-    <div className="p-4 grid gap-6">
-      <div className="bg-green-900 p-4 rounded-lg">
-        <h2 className="font-semibold text-lg text-white">Safety Rating:</h2>
-        <div className="flex justify-between mt-2">
-          <span className="text-red-500">Unsafe</span>
-          <span className="text-yellow-500">Moderate</span>
-          <span className="text-green-500">Safe</span>
+    const res: string = await (await fetch(`https://upcfoodsearch.com/search?s=${upc}`)).text();
+    const $ = cheerio.load(res);
+    const ingredientsContainer = $("#ingredientsStyled > p").find("a");
+
+    const ingredients: {name: string, type: string, href: string}[] = [];
+    var risk: number = 0;
+    var total: number = ingredientsContainer.length;
+
+    ingredientsContainer.each((i, el) => {
+        if ($(el).attr('data-name')) {
+            ingredients.push({
+                name: $(el).attr('data-name')            || "",
+                type: $(el).attr('class')?.split(" ")[0] || "",
+                href: $(el).attr('href')                 || "",
+            });
+
+            // Scale ingredient risk weight by estimating mass percentage using ingredient order
+            risk += typeToDanger[ingredients[i].type] * (total - i);
+        }
+    });
+
+    // Normalize risk by scaling factor
+    risk /= total; 
+
+    // 3 is the current median value of typeToDanger
+    const medianGrade: number = total * 3;
+
+    const grade = (1 - (risk/medianGrade)) * 100;
+
+    return {ingredients, grade};
+}
+
+export default async function Page({params: {upc}}: {params: {upc: string}}) {
+    const {ingredients, grade} = await getData(upc);
+
+    const bgGood = '#166534';
+    const bgOkay = '#854d0e';
+    const bgBad  = "#991b1b";
+
+    return (
+        <div className="p-4 grid gap-6">
+            <SafetySpectrum grade={grade}/>
+            <div className="flex flex-col w-1/3 overflow-scroll">
+                <h2 className="font-semibold text-2xl mb-2 text-white">Ingredients</h2>
+                <ul className="space-y-1">
+                    {ingredients.map(({name, type, href}, i) => (
+                        <li key={i} className="text-lg text-center p-1 text-zinc-100 rounded"
+                            style={{ backgroundColor: (typeToDanger[type] > 4) ? bgBad
+                                                    : (typeToDanger[type] > 1) ? bgOkay
+                                                    : bgGood
+                            }}>
+                            <a target="_blank" href={href}>{name}</a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
-        <div className="relative pt-1">
-          <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-green-200">
-            <div
-              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"
-              style={{
-                width: "70%",
-              }}
-            />
-          </div>
-        </div>
-        <p className="text-sm text-zinc-400 mt-2">
-          This product is generally safe based on its ingredients.
-        </p>
-      </div>
-      <div>
-        <h2 className="font-semibold text-lg mb-2 text-white">Ingredients</h2>
-        <ul className="space-y-1">
-            {ingredients.map((ingredient, i) => (
-            <li key={i} className="text-sm text-zinc-400">
-              <a target="_blank" href={links[i]}>{ingredient}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <h2 className="font-semibold text-lg mb-2 text-white">
-          Product Information
-        </h2>
-        <p className="text-sm text-zinc-400">
-          This is a brief description of the product. It&apos;s made by a
-          company that has had no recalls or lawsuits.
-        </p>
-      </div>
-    </div>
-  );
+    );
 }
 
 export const revalidate = 60;

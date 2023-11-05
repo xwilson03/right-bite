@@ -1,9 +1,9 @@
 "use client";
 
 import { useZxing } from "react-zxing";
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import Loader from "@/components/Loader";
 import Link from "next/link";
 
 export default function Component() {
@@ -20,10 +20,11 @@ export default function Component() {
 
     return (
         <>
-
+        <Suspense fallback= {<Loader/>}>
             <div className="flex flex-col items-center justify-center gap-3 mb-6">
                 <video ref={ref} />
             </div>
+        </Suspense>
 
             <p className="flex justify-center text-lg text-zinc-400 mb-4">
                 Scan the barcode of a food item or input the barcode number to get a safety rating and information about its
@@ -42,5 +43,5 @@ export default function Component() {
                 <Link className="bg-white text-black px-3 py-2 rounded" href={`/results/${upc}`}> Search </Link>
             </div>
         </>
-    )
+    );
 }
