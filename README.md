@@ -2,10 +2,10 @@
 We deployed our website on Vercel and have a custom domain name!
 Try it out here: https://www.rightbite.co/
 
-<img width="300" alt="image" src="https://github.com/xwilson03/right-bite/assets/91913752/2f8ba399-8028-492a-9bd3-affedf75f8a5">
-<img width="300" alt="image" src="https://github.com/xwilson03/right-bite/assets/91913752/2f19e9b8-25f8-48ec-8a03-e2af24937b19">
-<img width="300" alt="image" src="https://github.com/xwilson03/right-bite/assets/91913752/6cbddea8-4060-47da-aca3-bc16e52a9e44">
-<img width="300" alt="image" src="https://github.com/xwilson03/right-bite/assets/91913752/f80a65e2-da20-476d-ae2d-b7968204ec64">
+<img width="200" alt="image" src="https://github.com/xwilson03/right-bite/assets/91913752/2f8ba399-8028-492a-9bd3-affedf75f8a5">
+<img width="200" alt="image" src="https://github.com/xwilson03/right-bite/assets/91913752/2f19e9b8-25f8-48ec-8a03-e2af24937b19">
+<img width="200" alt="image" src="https://github.com/xwilson03/right-bite/assets/91913752/6cbddea8-4060-47da-aca3-bc16e52a9e44">
+<img width="200" alt="image" src="https://github.com/xwilson03/right-bite/assets/91913752/f80a65e2-da20-476d-ae2d-b7968204ec64">
 
 ## Inspiration
 Our inspiration for RightBite came from a shared commitment to food safety and informed eating. We recognized the need for a tool that empowers consumers to make healthier choices by providing essential safety information about the food they purchase.
