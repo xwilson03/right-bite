@@ -19,7 +19,7 @@ export default function Component() {
 
     return (
         <>
-            <div className="flex flex-col items-center justify-center gap-3 mb-6">
+            <div className="flex flex-col items-center justify-center gap-3 mb-6 max-h-2/3">
                 <video ref={ref} />
             </div>
             <p className="flex justify-center text-lg text-zinc-400 mb-4">

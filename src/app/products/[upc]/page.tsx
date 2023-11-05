@@ -16,7 +16,7 @@ async function getData(upc: string) {
     
     const res: string = await (await fetch(`https://upcfoodsearch.com/search?s=${upc}`)).text();
     const $ = cheerio.load(res);
-    const pName = $("div.col-xs-12 col-sm-8 col-md-9 h1").text();
+    const pName = $("div.col-xs-12.col-sm-8.col-md-9 h1").text();
     const ingredientsContainer = $("#ingredientsStyled > p").find("a");
     const manufacturerElement = $('td:contains("Manufacturer")');
     const manufacturer = manufacturerElement.next().text().trim();
@@ -24,6 +24,7 @@ async function getData(upc: string) {
     const ingredients: {name: string, type: string, href: string}[] = [];
     var risk: number = 0;
     var total: number = ingredientsContainer.length;
+
 
     ingredientsContainer.each((i, el) => {
         if ($(el).attr('data-name')) {
