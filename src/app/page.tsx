@@ -19,11 +19,7 @@ export default function Component() {
     });
 
     return (
-        <div className="w-full min-h-screen bg-zinc-900">
-            <div className="static flex justify-left align-middle m-0 p-0 gap-x-2 bg-zinc-800">
-              <Image className="m-2" src="/right-bite-logo.png" alt="RightBite Logo" width={75} height={75} priority/>
-              <h1 className="my-6 text-4xl text-white font-bold">RightBite</h1>
-            </div>
+        <>
 
             <div className="flex flex-col justify-center items-center">
                 <video ref={ref} />
@@ -45,6 +41,6 @@ export default function Component() {
                 />
                 <Link className="bg-white text-black px-3 py-2 rounded" href={`/results/${upc}`}>Scan</Link>
             </div>
-        </div>
+        </>
     )
 }
